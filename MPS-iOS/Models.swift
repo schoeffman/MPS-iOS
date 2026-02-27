@@ -30,6 +30,49 @@ struct Team: Identifiable, Decodable {
     let members: [TeamMember]
 }
 
+// MARK: - Project
+
+struct Project: Identifiable, Decodable {
+    let id: Int
+    let name: String
+    let targetDate: String
+    let status: String
+    let color: String
+    let projectType: String
+    let isSystem: Bool
+}
+
+// MARK: - Schedule
+
+struct Schedule: Identifiable, Decodable {
+    let id: Int
+    let name: String
+    let year: Int
+    let quarter: Int
+}
+
+// MARK: - ProjectLink
+
+struct ProjectLink: Identifiable, Decodable {
+    let id: Int
+    let url: String
+}
+
+struct ProjectDetail: Identifiable, Decodable {
+    let id: Int
+    let name: String
+    let targetDate: String
+    let status: String
+    let color: String
+    let projectType: String
+    let isSystem: Bool
+    let dri: TeamMember?
+    let members: [TeamMember]
+    let jiraProjectKey: String?
+    let atlassianProjectKey: String?
+    let links: [ProjectLink]
+}
+
 // MARK: - Enums
 
 enum CraftAbility: String, CaseIterable, Identifiable {
@@ -58,4 +101,17 @@ enum CraftFocus: String, CaseIterable, Identifiable {
     case Frontend, Backend, Fullstack, Mobile, Infrastructure, NotApplicable
     var id: String { rawValue }
     var displayName: String { self == .NotApplicable ? "N/A" : rawValue }
+}
+
+enum ProjectStatus: String, CaseIterable, Identifiable {
+    case Explore, Make, Complete, Cancelled, Paused
+    var id: String { rawValue }
+}
+
+enum ProjectType: String, CaseIterable, Identifiable {
+    case FeatureDevelopment, Maintenance, Other
+    var id: String { rawValue }
+    var displayName: String {
+        self == .FeatureDevelopment ? "Feature Development" : rawValue
+    }
 }

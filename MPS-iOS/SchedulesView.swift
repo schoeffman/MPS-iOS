@@ -1,38 +1,31 @@
 //
-//  TeamsView.swift
+//  SchedulesView.swift
 //  MPS-iOS
 //
 
 import SwiftUI
 
-struct TeamsView: View {
+struct SchedulesView: View {
     @Environment(AuthManager.self) var authManager
 
-    @State private var teams: [Team] = []
+    @State private var schedules: [Schedule] = []
     @State private var isLoading = false
     @State private var error: String?
-    @State private var showCreate = false
 
     private let client = GraphQLClient()
 
-    private var sorted: [Team] {
-        teams.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+    // Server already returns newest first (year desc, quarter desc)
+    private var sorted: [Schedule] {
+        schedules.sorted {
+            if $0.year != $1.year { return $0.year > $1.year }
+            return $0.quarter > $1.quarter
+        }
     }
 
     var body: some View {
         NavigationStack {
             content
-                .navigationTitle("Teams")
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button { showCreate = true } label: {
-                            Image(systemName: "plus")
-                        }
-                    }
-                }
-                .sheet(isPresented: $showCreate, onDismiss: { Task { await load() } }) {
-                    CreateTeamView()
-                }
+                .navigationTitle("Schedules")
                 .task { await load() }
                 .alert("Error", isPresented: Binding(
                     get: { error != nil },
@@ -52,16 +45,14 @@ struct TeamsView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if sorted.isEmpty {
             ContentUnavailableView(
-                "No Teams",
-                systemImage: "person.3.slash",
-                description: Text("No teams found in this space.")
+                "No Schedules",
+                systemImage: "calendar.badge.exclamationmark",
+                description: Text("No schedules found in this space.")
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
-            List(sorted) { team in
-                NavigationLink(destination: TeamDetailView(team: team)) {
-                    TeamRow(team: team)
-                }
+            List(sorted) { schedule in
+                ScheduleRow(schedule: schedule)
             }
             .listStyle(.plain)
         }
@@ -72,42 +63,36 @@ struct TeamsView: View {
         isLoading = true
         defer { isLoading = false }
         do {
-            struct Response: Decodable { let teams: [Team] }
+            struct Response: Decodable { let schedules: [Schedule] }
             let result: Response = try await client.fetch(
-                query: "{ teams { id name teamLead { id fullName } members { id fullName } } }",
+                query: "{ schedules { id name year quarter } }",
                 token: token
             )
-            teams = result.teams
+            schedules = result.schedules
         } catch {
             self.error = error.localizedDescription
         }
     }
 }
 
-// MARK: - TeamRow
+// MARK: - ScheduleRow
 
-private struct TeamRow: View {
-    let team: Team
+private struct ScheduleRow: View {
+    let schedule: Schedule
 
     var body: some View {
         VStack(alignment: .leading, spacing: 3) {
-            Text(team.name)
+            Text(schedule.name)
                 .font(.body.weight(.medium))
-            Text(subtitle)
+            Text("Q\(schedule.quarter) · \(schedule.year)")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
         }
         .padding(.vertical, 2)
     }
-
-    private var subtitle: String {
-        let count = team.members.count
-        let memberLabel = count == 1 ? "1 member" : "\(count) members"
-        return "Led by \(team.teamLead.fullName) · \(memberLabel)"
-    }
 }
 
 #Preview {
-    TeamsView()
+    SchedulesView()
         .environment(AuthManager())
 }

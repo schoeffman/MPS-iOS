@@ -126,7 +126,7 @@ struct UsersView: View {
 
 // MARK: - Supporting Views
 
-private struct FilterChip: View {
+struct FilterChip: View {
     let label: String
     let isSelected: Bool
     let action: () -> Void

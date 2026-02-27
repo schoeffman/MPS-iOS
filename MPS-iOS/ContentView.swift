@@ -17,6 +17,12 @@ struct ContentView: View {
             Tab("Teams", systemImage: "person.3.fill") {
                 TeamsView()
             }
+            Tab("Projects", systemImage: "folder.fill") {
+                ProjectsView()
+            }
+            Tab("Schedules", systemImage: "calendar") {
+                SchedulesView()
+            }
         }
     }
 }
