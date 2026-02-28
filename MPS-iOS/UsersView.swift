@@ -15,6 +15,9 @@ struct UsersView: View {
     @State private var error: String?
     @State private var selectedAbility: CraftAbility? = nil
     @State private var showCreate = false
+    @State private var showTeams = false
+    @State private var showTenure = false
+    @State private var showPerformanceCycles = false
     @State private var searchText = ""
 
     private let client = GraphQLClient()
@@ -47,7 +50,18 @@ struct UsersView: View {
         }
         .navigationTitle("Users")
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
+            ToolbarItemGroup(placement: .topBarTrailing) {
+                if embedded {
+                    Button { showTeams = true } label: {
+                        Image(systemName: "person.3.fill")
+                    }
+                    Button { showTenure = true } label: {
+                        Image(systemName: "calendar.badge.clock")
+                    }
+                    Button { showPerformanceCycles = true } label: {
+                        Image(systemName: "arrow.trianglehead.2.clockwise.rotate.90")
+                    }
+                }
                 Button { showCreate = true } label: {
                     Image(systemName: "plus")
                 }
@@ -56,6 +70,9 @@ struct UsersView: View {
         .sheet(isPresented: $showCreate, onDismiss: { Task { await load() } }) {
             CreateUserView()
         }
+        .sheet(isPresented: $showTeams) { TeamsView() }
+        .sheet(isPresented: $showTenure) { TenureView() }
+        .sheet(isPresented: $showPerformanceCycles) { PerformanceCyclesView() }
         .task { await load() }
         .searchable(text: $searchText, prompt: "Search users")
         .alert("Error", isPresented: Binding(

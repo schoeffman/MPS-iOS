@@ -6,10 +6,15 @@
 import SwiftUI
 
 struct PerformanceCyclesView: View {
+    var embedded = false
+
     var body: some View {
-        NavigationStack {
-            Text("")
-                .navigationTitle("Performance Cycles")
+        if embedded {
+            Text("").navigationTitle("Performance Cycles")
+        } else {
+            NavigationStack {
+                Text("").navigationTitle("Performance Cycles")
+            }
         }
     }
 }

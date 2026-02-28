@@ -6,10 +6,15 @@
 import SwiftUI
 
 struct TenureView: View {
+    var embedded = false
+
     var body: some View {
-        NavigationStack {
-            Text("")
-                .navigationTitle("Tenure")
+        if embedded {
+            Text("").navigationTitle("Tenure")
+        } else {
+            NavigationStack {
+                Text("").navigationTitle("Tenure")
+            }
         }
     }
 }

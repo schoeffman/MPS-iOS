@@ -6,6 +6,8 @@
 import SwiftUI
 
 struct ProjectsView: View {
+    var embedded = false
+
     @Environment(AuthManager.self) var authManager
 
     @State private var projects: [Project] = []
@@ -22,29 +24,28 @@ struct ProjectsView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                filterBar
-                Divider()
-                content
-            }
-            .navigationTitle("Projects")
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink(destination: StaticProjectsView(projects: projects.filter(\.isSystem))) {
-                        Image(systemName: "folder.fill.badge.gearshape")
-                    }
-                }
-            }
-            .task { await load() }
-                .alert("Error", isPresented: Binding(
-                    get: { error != nil },
-                    set: { if !$0 { error = nil } }
-                )) {
-                    Button("OK") { error = nil }
-                } message: {
-                    Text(error ?? "")
-                }
+        if embedded {
+            projectsContent
+        } else {
+            NavigationStack { projectsContent }
+        }
+    }
+
+    private var projectsContent: some View {
+        VStack(spacing: 0) {
+            filterBar
+            Divider()
+            content
+        }
+        .navigationTitle("Projects")
+        .task { await load() }
+        .alert("Error", isPresented: Binding(
+            get: { error != nil },
+            set: { if !$0 { error = nil } }
+        )) {
+            Button("OK") { error = nil }
+        } message: {
+            Text(error ?? "")
         }
     }
 

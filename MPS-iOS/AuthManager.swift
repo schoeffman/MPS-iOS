@@ -33,6 +33,7 @@ private final class PresentationContextProvider: NSObject, ASWebAuthenticationPr
 @Observable
 final class AuthManager {
     var sessionToken: String?
+    var activeSpaceId: String?
     var isLoading = false
     var lastError: String?
 
@@ -42,12 +43,24 @@ final class AuthManager {
     private var activePresentationProvider: PresentationContextProvider?
 
     private static let baseURL = "https://mps-p.up.railway.app"
+    private static let spaceKey = "mps.activeSpaceId"
 
     init() {
         sessionToken = KeychainHelper.read()
+        activeSpaceId = UserDefaults.standard.string(forKey: Self.spaceKey)
         if sessionToken != nil {
             Task { await validateSession() }
         }
+    }
+
+    func switchSpace(_ id: String) {
+        activeSpaceId = id
+        UserDefaults.standard.set(id, forKey: Self.spaceKey)
+    }
+
+    func clearActiveSpace() {
+        activeSpaceId = nil
+        UserDefaults.standard.removeObject(forKey: Self.spaceKey)
     }
 
     // MARK: Session validation
@@ -149,5 +162,7 @@ final class AuthManager {
     private func clearSession() {
         KeychainHelper.delete()
         sessionToken = nil
+        activeSpaceId = nil
+        UserDefaults.standard.removeObject(forKey: Self.spaceKey)
     }
 }
