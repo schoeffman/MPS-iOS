@@ -73,6 +73,31 @@ struct ProjectDetail: Identifiable, Decodable {
     let links: [ProjectLink]
 }
 
+// MARK: - Schedule Detail
+
+struct ScheduleAssignedProject: Identifiable, Decodable {
+    let id: Int
+    let name: String
+    let color: String
+}
+
+struct ScheduleAssignment: Decodable {
+    let project: ScheduleAssignedProject
+}
+
+struct ScheduleMember: Identifiable, Decodable {
+    let id: Int
+    let fullName: String
+    let assignments: [ScheduleAssignment]
+}
+
+struct ScheduleTeam: Identifiable, Decodable {
+    let id: Int
+    let name: String
+    let teamLead: TeamMember
+    let members: [ScheduleMember]
+}
+
 // MARK: - Enums
 
 enum CraftAbility: String, CaseIterable, Identifiable {

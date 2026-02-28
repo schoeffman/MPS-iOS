@@ -6,6 +6,8 @@
 import SwiftUI
 
 struct TeamsView: View {
+    var embedded = false
+
     @Environment(AuthManager.self) var authManager
 
     @State private var teams: [Team] = []
@@ -20,29 +22,37 @@ struct TeamsView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            content
-                .navigationTitle("Teams")
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button { showCreate = true } label: {
-                            Image(systemName: "plus")
-                        }
+        if embedded {
+            teamsContent
+        } else {
+            NavigationStack {
+                teamsContent
+            }
+        }
+    }
+
+    private var teamsContent: some View {
+        content
+            .navigationTitle("Teams")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button { showCreate = true } label: {
+                        Image(systemName: "plus")
                     }
                 }
-                .sheet(isPresented: $showCreate, onDismiss: { Task { await load() } }) {
-                    CreateTeamView()
-                }
-                .task { await load() }
-                .alert("Error", isPresented: Binding(
-                    get: { error != nil },
-                    set: { if !$0 { error = nil } }
-                )) {
-                    Button("OK") { error = nil }
-                } message: {
-                    Text(error ?? "")
-                }
-        }
+            }
+            .sheet(isPresented: $showCreate, onDismiss: { Task { await load() } }) {
+                CreateTeamView()
+            }
+            .task { await load() }
+            .alert("Error", isPresented: Binding(
+                get: { error != nil },
+                set: { if !$0 { error = nil } }
+            )) {
+                Button("OK") { error = nil }
+            } message: {
+                Text(error ?? "")
+            }
     }
 
     @ViewBuilder

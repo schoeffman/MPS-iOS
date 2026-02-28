@@ -6,6 +6,8 @@
 import SwiftUI
 
 struct UsersView: View {
+    var embedded = false
+
     @Environment(AuthManager.self) var authManager
 
     @State private var users: [User] = []
@@ -28,33 +30,41 @@ struct UsersView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                filterBar
-                Divider()
-                content
+        if embedded {
+            usersContent
+        } else {
+            NavigationStack {
+                usersContent
             }
-            .navigationTitle("Users")
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button { showCreate = true } label: {
-                        Image(systemName: "plus")
-                    }
+        }
+    }
+
+    private var usersContent: some View {
+        VStack(spacing: 0) {
+            filterBar
+            Divider()
+            content
+        }
+        .navigationTitle("Users")
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button { showCreate = true } label: {
+                    Image(systemName: "plus")
                 }
             }
-            .sheet(isPresented: $showCreate, onDismiss: { Task { await load() } }) {
-                CreateUserView()
-            }
-            .task { await load() }
-            .searchable(text: $searchText, prompt: "Search users")
-            .alert("Error", isPresented: Binding(
-                get: { error != nil },
-                set: { if !$0 { error = nil } }
-            )) {
-                Button("OK") { error = nil }
-            } message: {
-                Text(error ?? "")
-            }
+        }
+        .sheet(isPresented: $showCreate, onDismiss: { Task { await load() } }) {
+            CreateUserView()
+        }
+        .task { await load() }
+        .searchable(text: $searchText, prompt: "Search users")
+        .alert("Error", isPresented: Binding(
+            get: { error != nil },
+            set: { if !$0 { error = nil } }
+        )) {
+            Button("OK") { error = nil }
+        } message: {
+            Text(error ?? "")
         }
     }
 

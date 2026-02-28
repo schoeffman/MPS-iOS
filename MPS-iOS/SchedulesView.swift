@@ -11,6 +11,7 @@ struct SchedulesView: View {
     @State private var schedules: [Schedule] = []
     @State private var isLoading = false
     @State private var error: String?
+    @State private var showCreate = false
 
     private let client = GraphQLClient()
 
@@ -26,6 +27,16 @@ struct SchedulesView: View {
         NavigationStack {
             content
                 .navigationTitle("Schedules")
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button { showCreate = true } label: {
+                            Image(systemName: "plus")
+                        }
+                    }
+                }
+                .sheet(isPresented: $showCreate, onDismiss: { Task { await load() } }) {
+                    CreateScheduleView()
+                }
                 .task { await load() }
                 .alert("Error", isPresented: Binding(
                     get: { error != nil },
@@ -52,7 +63,9 @@ struct SchedulesView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
             List(sorted) { schedule in
-                ScheduleRow(schedule: schedule)
+                NavigationLink(destination: ScheduleDetailView(schedule: schedule)) {
+                    ScheduleRow(schedule: schedule)
+                }
             }
             .listStyle(.plain)
         }
