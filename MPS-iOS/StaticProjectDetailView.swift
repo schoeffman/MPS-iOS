@@ -143,7 +143,7 @@ struct StaticProjectDetailView: View {
             selectedColor = Color(hex: result.project.color) ?? .accentColor
             isColorDirty = false
         } catch {
-            self.error = error.localizedDescription
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled { self.error = error.localizedDescription }
         }
     }
 
@@ -164,7 +164,7 @@ struct StaticProjectDetailView: View {
             )
             isColorDirty = false
         } catch {
-            self.error = error.localizedDescription
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled { self.error = error.localizedDescription }
         }
     }
 

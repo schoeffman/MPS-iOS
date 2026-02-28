@@ -7,7 +7,7 @@ import SwiftUI
 
 @main
 struct MPS_iOSApp: App {
-    @State private var authManager = AuthManager()
+    private let authManager = AuthManager()
 
     var body: some Scene {
         WindowGroup {

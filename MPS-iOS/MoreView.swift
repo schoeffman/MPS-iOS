@@ -37,9 +37,9 @@ struct MoreView: View {
             }
             .navigationTitle("More")
         }
-        .sheet(isPresented: $showTasks) { TasksView() }
-        .sheet(isPresented: $showWorkHistory) { WorkHistoryView() }
-        .sheet(isPresented: $showSpaceSettings) { SpaceSettingsView() }
-        .sheet(isPresented: $showAccountSettings) { AccountSettingsView() }
+        .sheet(isPresented: $showTasks) { TasksView().environment(authManager) }
+        .sheet(isPresented: $showWorkHistory) { WorkHistoryView().environment(authManager) }
+        .sheet(isPresented: $showSpaceSettings) { SpaceSettingsView().environment(authManager) }
+        .sheet(isPresented: $showAccountSettings) { AccountSettingsView().environment(authManager) }
     }
 }

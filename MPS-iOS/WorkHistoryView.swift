@@ -137,7 +137,7 @@ struct WorkHistoryView: View {
                 $0.fullName.localizedCaseInsensitiveCompare($1.fullName) == .orderedAscending
             }
         } catch {
-            self.error = error.localizedDescription
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled { self.error = error.localizedDescription }
         }
     }
 
@@ -203,7 +203,7 @@ struct WorkHistoryView: View {
 
             buildResultLabel(userId: userId)
         } catch {
-            self.error = error.localizedDescription
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled { self.error = error.localizedDescription }
         }
     }
 

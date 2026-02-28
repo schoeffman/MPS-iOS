@@ -42,7 +42,7 @@ struct TeamsView: View {
                 }
             }
             .sheet(isPresented: $showCreate, onDismiss: { Task { await load() } }) {
-                CreateTeamView()
+                CreateTeamView().environment(authManager)
             }
             .task { await load() }
             .alert("Error", isPresented: Binding(
@@ -89,7 +89,7 @@ struct TeamsView: View {
             )
             teams = result.teams
         } catch {
-            self.error = error.localizedDescription
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled { self.error = error.localizedDescription }
         }
     }
 }

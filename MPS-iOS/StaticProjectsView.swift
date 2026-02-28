@@ -78,7 +78,7 @@ struct StaticProjectsView: View {
             )
             projects = result.projects
         } catch {
-            self.error = error.localizedDescription
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled { self.error = error.localizedDescription }
         }
     }
 }

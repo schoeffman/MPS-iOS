@@ -6,6 +6,7 @@
 import SwiftUI
 
 struct TeamDetailView: View {
+    @Environment(AuthManager.self) var authManager
     @State private var currentTeam: Team
     @State private var showEdit = false
 
@@ -43,6 +44,7 @@ struct TeamDetailView: View {
             EditTeamView(team: currentTeam) { updated in
                 currentTeam = updated
             }
+            .environment(authManager)
         }
     }
 

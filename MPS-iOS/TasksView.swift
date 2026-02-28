@@ -204,7 +204,7 @@ struct TasksView: View {
             }
             if dirty { PriorityStorage.save(pyramidSlots) }
         } catch {
-            self.error = error.localizedDescription
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled { self.error = error.localizedDescription }
         }
     }
 
@@ -223,7 +223,7 @@ struct TasksView: View {
             PriorityStorage.save(pyramidSlots)
             tasks.removeAll { $0.id == task.id }
         } catch {
-            self.error = error.localizedDescription
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled { self.error = error.localizedDescription }
         }
     }
 }
@@ -376,7 +376,7 @@ private struct CreateTaskSheet: View {
             )
             dismiss()
         } catch {
-            self.error = error.localizedDescription
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled { self.error = error.localizedDescription }
             isSaving = false
         }
     }
@@ -539,7 +539,7 @@ private struct TaskDetailSheet: View {
                     token: token
                 )
             } catch {
-                self.error = error.localizedDescription
+                if !(error is CancellationError), (error as? URLError)?.code != .cancelled { self.error = error.localizedDescription }
                 isSaving = false
                 return
             }
@@ -565,7 +565,7 @@ private struct TaskDetailSheet: View {
             }
             dismiss()
         } catch {
-            self.error = error.localizedDescription
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled { self.error = error.localizedDescription }
             isSaving = false
         }
     }
@@ -586,7 +586,7 @@ private struct TaskDetailSheet: View {
             }
             dismiss()
         } catch {
-            self.error = error.localizedDescription
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled { self.error = error.localizedDescription }
             isSaving = false
         }
     }
@@ -685,7 +685,7 @@ private struct CompletedTasksView: View {
             total = result.completedTasks.total
             currentPage = page
         } catch {
-            self.error = error.localizedDescription
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled { self.error = error.localizedDescription }
         }
     }
 
@@ -702,7 +702,7 @@ private struct CompletedTasksView: View {
             tasks.removeAll { $0.id == task.id }
             total = max(0, total - 1)
         } catch {
-            self.error = error.localizedDescription
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled { self.error = error.localizedDescription }
         }
     }
 }

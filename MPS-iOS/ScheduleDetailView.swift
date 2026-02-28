@@ -66,6 +66,7 @@ struct ScheduleDetailView: View {
                 EditScheduleView(schedule: current) { updated in
                     current = updated
                 }
+                .environment(authManager)
             }
             .sheet(item: $editingMember) { member in
                 ProjectPickerView(member: member, projects: allProjects) { project in
@@ -394,7 +395,7 @@ struct ScheduleDetailView: View {
 
             computeUncoveredWeeks()
         } catch {
-            self.error = error.localizedDescription
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled { self.error = error.localizedDescription }
         }
     }
 
@@ -445,7 +446,7 @@ struct ScheduleDetailView: View {
                 return ScheduleTeam(id: team.id, name: team.name, teamLead: team.teamLead, members: updatedMembers)
             }
         } catch {
-            self.error = error.localizedDescription
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled { self.error = error.localizedDescription }
         }
     }
 
@@ -491,7 +492,7 @@ struct ScheduleDetailView: View {
             }
             computeUncoveredWeeks()
         } catch {
-            self.error = error.localizedDescription
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled { self.error = error.localizedDescription }
         }
     }
 
@@ -536,7 +537,7 @@ struct ScheduleDetailView: View {
             isMultiSelectMode = false
             selectedMemberIds = []
         } catch {
-            self.error = error.localizedDescription
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled { self.error = error.localizedDescription }
         }
     }
 
@@ -579,7 +580,7 @@ struct ScheduleDetailView: View {
             }
             computeUncoveredWeeks()
         } catch {
-            self.error = error.localizedDescription
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled { self.error = error.localizedDescription }
         }
     }
 }

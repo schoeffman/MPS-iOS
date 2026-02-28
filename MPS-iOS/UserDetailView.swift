@@ -6,6 +6,7 @@
 import SwiftUI
 
 struct UserDetailView: View {
+    @Environment(AuthManager.self) var authManager
     @State private var currentUser: User
     @State private var showEdit = false
 
@@ -41,6 +42,7 @@ struct UserDetailView: View {
             EditUserView(user: currentUser) { updated in
                 currentUser = updated
             }
+            .environment(authManager)
         }
     }
 

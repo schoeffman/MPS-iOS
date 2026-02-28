@@ -37,6 +37,7 @@ struct ProjectDetailView: View {
                 EditProjectView(project: d) { updated in
                     detail = updated
                 }
+                .environment(authManager)
             }
         }
         .task { await load() }
@@ -163,7 +164,7 @@ struct ProjectDetailView: View {
             )
             detail = result.project
         } catch {
-            self.error = error.localizedDescription
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled { self.error = error.localizedDescription }
         }
     }
 }

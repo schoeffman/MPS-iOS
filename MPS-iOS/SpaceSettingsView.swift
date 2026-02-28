@@ -277,7 +277,7 @@ struct SpaceSettingsView: View {
                 ownerEmail = activeSpace?.email ?? ""
             }
         } catch {
-            self.error = error.localizedDescription
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled { self.error = error.localizedDescription }
         }
     }
 
@@ -294,7 +294,7 @@ struct SpaceSettingsView: View {
                 limits[idx] = result.setJobLevelLimit
             }
         } catch {
-            self.error = error.localizedDescription
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled { self.error = error.localizedDescription }
         }
     }
 
@@ -333,7 +333,7 @@ struct SpaceSettingsView: View {
             let _: Result = try await client.fetch(query: "mutation { removeJiraConfig }", token: token)
             jiraConfig = nil
         } catch {
-            self.error = error.localizedDescription
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled { self.error = error.localizedDescription }
         }
     }
 
@@ -367,7 +367,7 @@ struct SpaceSettingsView: View {
             )
             members.removeAll { $0.authId == authId }
         } catch {
-            self.error = error.localizedDescription
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled { self.error = error.localizedDescription }
         }
     }
 
@@ -384,7 +384,7 @@ struct SpaceSettingsView: View {
             authManager.clearActiveSpace()
             await load()
         } catch {
-            self.error = error.localizedDescription
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled { self.error = error.localizedDescription }
         }
     }
 

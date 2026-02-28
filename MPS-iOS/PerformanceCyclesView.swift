@@ -109,7 +109,7 @@ struct PerformanceCyclesView: View {
             )
             cycles = result.performanceCycles
         } catch {
-            self.error = error.localizedDescription
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled { self.error = error.localizedDescription }
         }
     }
 
@@ -124,7 +124,7 @@ struct PerformanceCyclesView: View {
             )
             cycles.removeAll { $0.id == cycle.id }
         } catch {
-            self.error = error.localizedDescription
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled { self.error = error.localizedDescription }
         }
         deletingCycle = nil
     }
@@ -277,7 +277,7 @@ private struct CreateEditCycleSheet: View {
                 selectedUserIds = Set(availableUsers.map { $0.id })
             }
         } catch {
-            self.error = error.localizedDescription
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled { self.error = error.localizedDescription }
         }
     }
 
@@ -305,7 +305,7 @@ private struct CreateEditCycleSheet: View {
             }
             dismiss()
         } catch {
-            self.error = error.localizedDescription
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled { self.error = error.localizedDescription }
         }
     }
 }

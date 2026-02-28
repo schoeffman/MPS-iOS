@@ -68,11 +68,11 @@ struct UsersView: View {
             }
         }
         .sheet(isPresented: $showCreate, onDismiss: { Task { await load() } }) {
-            CreateUserView()
+            CreateUserView().environment(authManager)
         }
-        .sheet(isPresented: $showTeams) { TeamsView() }
-        .sheet(isPresented: $showTenure) { TenureView() }
-        .sheet(isPresented: $showPerformanceCycles) { PerformanceCyclesView() }
+        .sheet(isPresented: $showTeams) { TeamsView().environment(authManager) }
+        .sheet(isPresented: $showTenure) { TenureView().environment(authManager) }
+        .sheet(isPresented: $showPerformanceCycles) { PerformanceCyclesView().environment(authManager) }
         .task { await load() }
         .searchable(text: $searchText, prompt: "Search users")
         .alert("Error", isPresented: Binding(
@@ -146,7 +146,7 @@ struct UsersView: View {
             )
             users = result.users
         } catch {
-            self.error = error.localizedDescription
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled { self.error = error.localizedDescription }
         }
     }
 }

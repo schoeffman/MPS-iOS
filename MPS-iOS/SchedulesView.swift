@@ -35,7 +35,7 @@ struct SchedulesView: View {
                     }
                 }
                 .sheet(isPresented: $showCreate, onDismiss: { Task { await load() } }) {
-                    CreateScheduleView()
+                    CreateScheduleView().environment(authManager)
                 }
                 .task { await load() }
                 .alert("Error", isPresented: Binding(
@@ -83,7 +83,7 @@ struct SchedulesView: View {
             )
             schedules = result.schedules
         } catch {
-            self.error = error.localizedDescription
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled { self.error = error.localizedDescription }
         }
     }
 }

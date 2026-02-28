@@ -206,7 +206,7 @@ struct AccountSettingsView: View {
                 authManager.switchSpace(first.id)
             }
         } catch {
-            self.error = error.localizedDescription
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled { self.error = error.localizedDescription }
         }
     }
 
@@ -230,7 +230,7 @@ struct AccountSettingsView: View {
             )
             await authManager.signOut()
         } catch {
-            self.error = error.localizedDescription
+            if !(error is CancellationError), (error as? URLError)?.code != .cancelled { self.error = error.localizedDescription }
         }
     }
 
